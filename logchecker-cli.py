@@ -1,16 +1,17 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+"""Check RIP log score using the Redacted API."""
 
-import requests
-import chardet
 import json
 import sys
 import os
+import requests
+import chardet
 
 def main():
+    """Run the log checker script."""
     # Retrieve API key from environment variable
-    try:
-        api_key = os.environ['RED_API_KEY']
-    except KeyError:
+    api_key = os.getenv('RED_API_KEY')
+    if not api_key:
         print("Please set the $RED_API_KEY environment variable as your API key!")
         sys.exit(1)
 
@@ -52,7 +53,7 @@ def main():
             score = data['response']['score']
             print(f"Score: {score}")
             if score == 100:
-                print("Perfect Score! No issues reported.")
+                print("Perfect Score! No Issues reported.")
             else:
                 print("Issues:")
                 for item in data['response']['issues']:

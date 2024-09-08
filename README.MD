@@ -1,11 +1,14 @@
 # logchecker-cli
-simple python script to check rip log score using the redacted API
+a simple python script to check rip log score using the redacted API.
 
 ## installation
+install the required dependencies with:
 ```sh
 pip install -r requirements.txt
 ```
-or you can use your native package manager
+or you can use your native package manager.
+
+you can also move this script to somewhere in your ```$PATH``` for easy access
 
 ## usage
 first, set the environment variable `$RED_API_KEY` as you api key:
