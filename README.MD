@@ -23,6 +23,6 @@ instead, you can also run it on every file on a dir, by passing the --all option
 ```sh
 ./logchecker-cli --all
 ```
-the ```--all``` option will look for files in subdirs, but be careful to run only in the directory you want.
+the ```--all``` option will <i>also</i> look for files in subdirs, but be careful to run only in the directory you want.
 
 the script will print the log's score and issues, if there are any.
