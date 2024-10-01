@@ -1,42 +1,50 @@
 #!/usr/bin/env python3
 """Check RIP log score using the Redacted API."""
 
-import glob
 import time
 import json
 import sys
 import os
-import requests
 import chardet
+import requests
 
 def main():
     """Run the log checker script."""
     # Retrieve API key from environment variable
-    api_key = os.getenv('RED_API_KEY')
-    if not api_key:
-        print("Please set the $RED_API_KEY environment variable as your API key!")
-        sys.exit(1)
-
-    # Check command-line arguments
-    if len(sys.argv) < 2:
-        print("Usage: logchecker [FILE] [--all]")
-        sys.exit(1)
-
-    if sys.argv[1] == '--all':
-        # Get all .log files in the current directory
-        log_files = glob.glob("*.log")
-        if not log_files:
-            print("No .log files found!")
+    try:
+        api_key = os.getenv('RED_API_KEY')
+        if not api_key:
+            print("Please set the $RED_API_KEY environment variable as your API key!")
             sys.exit(1)
 
-        for log_path in log_files:
-            process_log_file(log_path, api_key)
-            time.sleep(2)  # Delay between processing files
+        # Check command-line arguments
+        if len(sys.argv) < 2:
+            print("Usage: logchecker [FILE] [--all]")
+            sys.exit(1)
 
-    else:
-        # Get log file path from command-line arguments
-        log_path = sys.argv[1]
-        process_log_file(log_path, api_key)
+        if sys.argv[1] == '--all':
+            # Traverse directories for .log files
+            log_files = []
+            for dirpath, _, filenames in os.walk('.'):
+                for filename in filenames:
+                    if filename.lower().endswith('.log'):
+                        log_files.append(os.path.join(dirpath, filename))
+
+            if not log_files:
+                print("No .log files found!")
+                sys.exit(1)
+
+            for log_path in log_files:
+                process_log_file(log_path, api_key)
+                time.sleep(2)  # Delay between processing files
+
+        else:
+            # Get log file path from command-line arguments
+            log_path = sys.argv[1]
+            process_log_file(log_path, api_key)
+    except KeyboardInterrupt:
+        print("\nInterrupted by user. Aborting...")
+        sys.exit(0)
 
 def process_log_file(log_path, api_key):
     """Process a single log file."""
