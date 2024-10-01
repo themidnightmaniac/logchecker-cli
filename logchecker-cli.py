@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Check RIP log score using the Redacted API."""
 
+import glob
+import time
 import json
 import sys
 import os
@@ -15,12 +17,30 @@ def main():
         print("Please set the $RED_API_KEY environment variable as your API key!")
         sys.exit(1)
 
-    # Get log file path from command-line arguments
-    if len(sys.argv) != 2:
-        print("Usage: logchecker [FILE]")
+    # Check command-line arguments
+    if len(sys.argv) < 2:
+        print("Usage: logchecker [FILE] [--all]")
         sys.exit(1)
 
-    log_path = sys.argv[1]
+    if sys.argv[1] == '--all':
+        # Get all .log files in the current directory
+        log_files = glob.glob("*.log")
+        if not log_files:
+            print("No .log files found!")
+            sys.exit(1)
+
+        for log_path in log_files:
+            process_log_file(log_path, api_key)
+            time.sleep(2)  # Delay between processing files
+
+    else:
+        # Get log file path from command-line arguments
+        log_path = sys.argv[1]
+        process_log_file(log_path, api_key)
+
+def process_log_file(log_path, api_key):
+    """Process a single log file."""
+    print(f"Processing {log_path}...")
 
     # Convert relative path to absolute path
     log_path = os.path.abspath(log_path)
@@ -37,7 +57,7 @@ def main():
             encoding = chardet.detect(raw_data)['encoding']
     except (FileNotFoundError, IOError) as e:
         print(f"Error opening file: {e}")
-        sys.exit(1)
+        return  # Skip to the next file
 
     # Open the file for reading
     try:
@@ -60,13 +80,10 @@ def main():
                     print(item)
     except requests.RequestException as e:
         print(f"Error making POST request: {e}")
-        sys.exit(1)
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON response: {e}")
-        sys.exit(1)
     except Exception as e:
         print(f"Unexpected error: {e}")
-        sys.exit(1)
 
 if __name__ == "__main__":
     main()
