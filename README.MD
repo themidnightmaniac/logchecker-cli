@@ -15,6 +15,10 @@ first, set the environment variable `$RED_API_KEY` as you api key:
 ```sh
 export RED_API_KEY='your_api_key'
 ```
+on windows 
+```sh
+set RED_API_KEY="your_api_key"
+```
 then just run the script passing your log file as an argument:
 ```sh
 ./logchecker-cli [FILE]
