@@ -8,6 +8,8 @@ import os
 import chardet
 import requests
 
+URL = 'https://redacted.sh/ajax.php?action=logchecker'
+
 def main():
     """Run the log checker script."""
     # Retrieve API key from environment variable
@@ -72,8 +74,7 @@ def process_log_file(log_path, api_key):
         with open(log_path, 'r', encoding=encoding, errors='ignore') as f:
             logfile = {'log': f}
             headers = {'Authorization': api_key}
-            url = 'https://redacted.ch/ajax.php?action=logchecker'
-            response = requests.post(url, headers=headers, files=logfile, timeout=5)
+            response = requests.post(URL, headers=headers, files=logfile, timeout=5)
             response.raise_for_status()  # Check for HTTP errors
 
             # Parse and display the response
